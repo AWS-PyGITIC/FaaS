@@ -20,7 +20,7 @@ jobs:
         run: DOCKER_BUILDKIT=1 docker build --file Dockerfile --output out . 
       
       - name: list now the files
-        uses: actions/upload-artifacts@v3
+        uses: actions/upload-artifact@v3
         with:
           name: artefacto
             path:out/
