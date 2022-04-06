@@ -1,12 +1,12 @@
 # ABP-PyGITIC
-
+## Fecha
 ## Grupo
 Pablo Torrijos Arenas, Alejandro Alejandro Gómez Escribano y Alberto Merino Risueño. 
-### Trabajo
+## Trabajo
 
 ## Objetivos de la sesión
 ``` Escribir aqui los objetivos de la sesión.```
-### Temas tratados
+## Temas tratados
 ``` Escribir aqui los temas tratados```
 - tema 1
 - tema 2
