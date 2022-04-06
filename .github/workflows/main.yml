@@ -1,8 +1,12 @@
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - development
 
 jobs:
   create_arch_images:
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: An automated way to create the image
     steps:
       - name: Checkout
@@ -11,6 +15,6 @@ jobs:
         uses: ./
         id: create
         with: 
-        file: 'diagram.py'
+          file: 'diagram.py'
       - name: Get the opt
         run: echo "the time was ${{ steps.create.outputs.files }}"
