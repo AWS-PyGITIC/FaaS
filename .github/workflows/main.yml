@@ -8,23 +8,18 @@ jobs:
   create_arch_images:
     runs-on: ubuntu-latest
 
-    name: An automated way to create the file
+    name: Take care of the repo
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: list files
-        run: ls
-
-      - name: Create the img
+      - name: Create the docker image
         run: DOCKER_BUILDKIT=1 docker build --file Dockerfile --output out . 
       
-      - name: list now the files
+      - name: share the compiled files
         uses: actions/upload-artifact@v3
         with:
-          name: artefacto
+          name: files
           path: out/
 
-      - name: Get the opt
-        run: echo "the time was ${{ steps.create.outputs.files }}"
 
