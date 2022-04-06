@@ -23,7 +23,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: artefacto
-            path:out/
+          path: out/
 
       - name: Get the opt
         run: echo "the time was ${{ steps.create.outputs.files }}"
