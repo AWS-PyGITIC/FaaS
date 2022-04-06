@@ -7,16 +7,29 @@ on:
 jobs:
   create_arch_images:
     runs-on: ubuntu-latest
+    env:
+      test:hola
+
     name: An automated way to create the image
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Create the img
-        uses: ./
-        id: create
-        with: 
-          file: 'diagram.py'
-      - name: Get the opt
-        run: echo "the time was ${{ steps.create.outputs.files }}"
+
       - name: list files
         run: ls
+
+      - name: Create the img
+        run: DOCKER_BUILDKIT=1 docker build --file Dockerfile --output out . 
+        env:
+          DOCKER_BUILDKIT=1 
+
+      
+      - name: list now the files
+        uses: actions/upload-artifacts@v3
+        with:
+          name: artefacto
+            path:out/
+
+      - name: Get the opt
+        run: echo "the time was ${{ steps.create.outputs.files }}"
+
