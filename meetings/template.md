@@ -3,7 +3,8 @@
 ## Grupo
 Pablo Torrijos Arenas, Alejandro Alejandro Gómez Escribano y Alberto Merino Risueño. 
 ## Trabajo
-
+Aplicación para controlar la entrada a un edificio (reconoce
+foto).
 ## Objetivos de la sesión
 ``` Escribir aqui los objetivos de la sesión.```
 ## Temas tratados
