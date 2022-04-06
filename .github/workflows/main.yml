@@ -8,9 +8,8 @@ jobs:
   create_arch_images:
     runs-on: ubuntu-latest
     env:
-      test:hola
 
-    name: An automated way to create the image
+    name: An automated way to create the file
     steps:
       - name: Checkout
         uses: actions/checkout@v3
