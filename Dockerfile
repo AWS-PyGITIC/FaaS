@@ -16,4 +16,4 @@ COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 FROM scratch AS export-stage
-COPY --from=build-stage /diagram.png /
+COPY --from=build-stage /grouped_workers.png /
