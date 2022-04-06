@@ -3,7 +3,7 @@ FROM python:alpine3.15
 
 COPY requirements.txt requirements.txt 
 
-run pip install -r requeriments.txt
+run pip install -r requirements.txt 
 
 RUN apk --no-cache add graphviz
 
