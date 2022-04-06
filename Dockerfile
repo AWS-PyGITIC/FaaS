@@ -9,6 +9,8 @@ RUN apk --no-cache add graphviz
 
 COPY diagram.py diagram.py
 
+RUN ls
+
 RUN python3 diagram.py
 
 COPY entrypoint.sh /entrypoint.sh
