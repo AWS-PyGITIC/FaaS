@@ -5,7 +5,7 @@ COPY requirements.txt requirements.txt
 
 run pip install -r requirements.txt 
 
-RUN apk --no-cache add graphviz terminus-font ttf-inconsolata ttf-dejavu font-bitstream-* font-noto font-noto-* ttf-font-awesome font-noto-extra
+RUN apk --no-cache add graphviz font-noto
 
 COPY diagram.py diagram.py
 
