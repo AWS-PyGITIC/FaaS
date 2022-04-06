@@ -1,7 +1,7 @@
 FROM python:alpine3.15
 
 
-COPY requeriments.txt requeriments.txt
+COPY requirements.txt requirements.txt 
 
 run pip install -r requeriments.txt
 
