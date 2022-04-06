@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - main
-      - development
+      - Development
 
 jobs:
   create_arch_images:
