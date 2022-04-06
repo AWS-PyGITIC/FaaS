@@ -7,7 +7,6 @@ on:
 jobs:
   create_arch_images:
     runs-on: ubuntu-latest
-    env:
 
     name: An automated way to create the file
     steps:
