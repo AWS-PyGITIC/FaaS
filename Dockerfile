@@ -1,4 +1,4 @@
-FROM python:alpine3.15
+FROM python:alpine3.15 AS build-stage
 
 
 COPY requirements.txt requirements.txt 
@@ -14,3 +14,6 @@ RUN python3 diagram.py
 COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+FROM scratch AS export-stage
+COPY --from=build-stage /diagram.png /

@@ -18,3 +18,5 @@ jobs:
           file: 'diagram.py'
       - name: Get the opt
         run: echo "the time was ${{ steps.create.outputs.files }}"
+      - name: list files
+        run: ls
