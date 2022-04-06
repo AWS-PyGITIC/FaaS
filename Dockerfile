@@ -11,7 +11,7 @@ COPY diagram.py diagram.py
 
 RUN ls
 
-RUN python3 diagram.py
+#RUN python3 diagram.py
 
 COPY entrypoint.sh /entrypoint.sh
 
