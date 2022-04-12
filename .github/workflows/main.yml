@@ -1,7 +1,8 @@
 on:
   push:
     branches:
-      - Development
+      - CI-Development
+      - main
 
 jobs:
   create_arch_images:
