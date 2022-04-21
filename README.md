@@ -9,3 +9,5 @@ El diseño se ha realizado con la herramienta [Diagrams.py](https://github.com/m
 
 # Recursos
 https://webrtc.org/
+
+https://github.com/localstack/localstack
