@@ -42,3 +42,18 @@ resource "aws_instance" "vm_1" {
 
 }
 
+#Create a API Gateway
+resource "aws_api_gateway_rest_api" "prod_api" {
+  name = "prod_api"
+  description = "prod_api"
+}
+
+#Create a Lambda function
+resource "aws_lambda_function" "prod_lambda" {
+  filename = "lambda_function.zip"
+  function_name = "prod_lambda"
+  role = var.aws_role
+  handler = "view_all_videos.lambda_handler"
+  runtime = "python3.6"
+  publish = true
+}
