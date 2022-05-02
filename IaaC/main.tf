@@ -30,18 +30,6 @@ resource "aws_subnet" "prod_subnet-1" {
 }
 
 
-#EC2 with the trained model
-resource "aws_instance" "vm_1" {
-  ami = "ami-0b0af3577fe5e3532" #RHEL ami
-  instance_type = "t2.micro"
-  subnet_id = aws_subnet.prod_subnet-1.id
-
-  tags = {
-    Name = "RHEL"
-  }
-
-}
-
 #Create a API Gateway
 resource "aws_api_gateway_rest_api" "prod_api" {
   name = "prod_api"
