@@ -36,6 +36,45 @@ resource "aws_api_gateway_rest_api" "prod_api" {
   description = "prod_api"
 }
 
+
+#############
+## STORAGE ##
+#############
+
+# Create a S3 bucket for video uploads
+resource "aws_s3_bucket" "video_bucket" {
+  bucket = "video_bucket.faas.muii"
+}
+
+# Create a database with a timestamp and a person ID (at this moment, a person ID and a photo ID)
+resource "aws_dynamodb_table" "processed_data_table" {
+  name = "processed_data_table"
+  attributes = {
+    hash_key = "person_id"
+    range_key = "photo_id"
+    billing_mode = "PAY_PER_REQUEST"
+    stream_enabled = true
+  }
+}
+
+
+#########
+## SNS ##
+#########
+
+# Create a SNS topic for notifications
+resource "aws_sns_topic" "email_topic" {
+  name = "email_topic"
+}
+
+# Subscribe the email to the topic
+resource "aws_sns_topic_subscription" email_target" {
+  topic_arn = aws_sns_topic.email_topic.arn
+  protocol  = "email"
+  endpoint  = var.email
+}
+
+
 #############
 ## LAMBDAS ##
 #############
@@ -68,6 +107,12 @@ resource "aws_lambda_function" "prod_lambda_send_email" {
   handler = "send_email.lambda_handler"
   runtime = "python3.6"
   publish = true
+
+  environment {
+    variables = {
+      topic_arn = aws_sns_topic.email_topic.arn
+    }
+  }
 }
 
 #Create a Lambda function for see your checks
@@ -100,21 +145,16 @@ resource "aws_lambda_function" "prod_lambda_upload_face" {
   publish = true
 }
 
-#############
-## STORAGE ##
-#############
 
-# Create a S3 bucket for video uploads
-resource "aws_s3_bucket" "video_bucket" {
-  bucket = "video_bucket.faas.muii"
+##############
+## TRIGGERS ##
+##############
+
+# Create a trigger for send email lambda function
+resource "aws_lambda_event_source_mapping" "lambda_send_email_trigger" {
+  event_source_arn  = aws_dynamodb_table.processed_data_table.arn
+  function_name     = prod_lambda_send_email
+  starting_position = "LATEST"
+  batch_size        = 1
 }
 
-# Create a database with a timestamp and a person ID (at this moment, a person ID and a photo ID)
-resource "aws_dynamodb_table" "processed_data_table" {
-  name = "processed_data_table"
-  attributes = {
-    hash_key = "person_id"
-    range_key = "photo_id"
-    billing_mode = "PAY_PER_REQUEST"
-  }
-}
