@@ -36,6 +36,9 @@ resource "aws_api_gateway_rest_api" "prod_api" {
   description = "prod_api"
 }
 
+#############
+## LAMBDAS ##
+#############
 
 #Create a Lambda function for upload a video
 resource "aws_lambda_function" "prod_lambda" {
@@ -95,4 +98,25 @@ resource "aws_lambda_function" "prod_lambda_upload_face" {
   handler = "upload_face.lambda_handler"
   runtime = "python3.6"
   publish = true
+}
+
+#############
+## STORAGE ##
+#############
+
+# Create a S3 bucket for video uploads
+resource "aws_s3_bucket" "prod_bucket" {
+  bucket = "prod_bucket"
+  acl = "public-read"
+  force_destroy = true
+}
+
+# Create a database with a timestamp and a person id
+resource "aws_dynamodb_table" "prod_table" {
+  name = "prod_table"
+  attributes = {
+    hash_key = "person_id"
+    range_key = "timestamp"
+    billing_mode = "PAY_PER_REQUEST"
+  }
 }
