@@ -109,12 +109,12 @@ resource "aws_s3_bucket" "video_bucket" {
   bucket = "video_bucket.faas.muii"
 }
 
-# Create a database with a timestamp and a person id
+# Create a database with a timestamp and a person ID (at this moment, a person ID and a photo ID)
 resource "aws_dynamodb_table" "processed_data_table" {
   name = "processed_data_table"
   attributes = {
     hash_key = "person_id"
-    range_key = "timestamp"
+    range_key = "photo_id"
     billing_mode = "PAY_PER_REQUEST"
   }
 }
