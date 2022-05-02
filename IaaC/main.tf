@@ -105,15 +105,13 @@ resource "aws_lambda_function" "prod_lambda_upload_face" {
 #############
 
 # Create a S3 bucket for video uploads
-resource "aws_s3_bucket" "prod_bucket" {
-  bucket = "prod_bucket"
-  acl = "public-read"
-  force_destroy = true
+resource "aws_s3_bucket" "video_bucket" {
+  bucket = "video_bucket.faas.muii"
 }
 
 # Create a database with a timestamp and a person id
-resource "aws_dynamodb_table" "prod_table" {
-  name = "prod_table"
+resource "aws_dynamodb_table" "processed_data_table" {
+  name = "processed_data_table"
   attributes = {
     hash_key = "person_id"
     range_key = "timestamp"
