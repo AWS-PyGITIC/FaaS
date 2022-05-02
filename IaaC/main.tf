@@ -48,12 +48,63 @@ resource "aws_api_gateway_rest_api" "prod_api" {
   description = "prod_api"
 }
 
-#Create a Lambda function
+
+#Create a Lambda function for upload a video
 resource "aws_lambda_function" "prod_lambda" {
-  filename = "lambda_function.zip"
+  filename = "lambda_function_upload.zip"
   function_name = "prod_lambda"
   role = var.aws_role
-  handler = "view_all_videos.lambda_handler"
+  handler = "upload_video.lambda_handler"
+  runtime = "python3.6"
+  publish = true
+}
+
+#Create a Lambda function for detect a video
+resource "aws_lambda_function" "prod_lambda_detect" {
+  filename = "lambda_function_detect.zip"
+  function_name = "prod_lambda_detect"
+  role = var.aws_role
+  handler = "detect_video.lambda_handler"
+  runtime = "python3.6"
+  publish = true
+}
+
+#Create a Lambda function for send emails
+resource "aws_lambda_function" "prod_lambda_send_email" {
+  filename = "lambda_function_send_email.zip"
+  function_name = "prod_lambda_send_email"
+  role = var.aws_role
+  handler = "send_email.lambda_handler"
+  runtime = "python3.6"
+  publish = true
+}
+
+#Create a Lambda function for see your checks
+resource "aws_lambda_function" "prod_lambda_see_checks" {
+  filename = "lambda_function_see_checks.zip"
+  function_name = "prod_lambda_see_checks"
+  role = var.aws_role
+  handler = "see_checks.lambda_handler"
+  runtime = "python3.6"
+  publish = true
+}
+
+#Create a Lambda function for see all checks
+resource "aws_lambda_function" "prod_lambda_see_all_checks" {
+  filename = "lambda_function_see_all_checks.zip"
+  function_name = "prod_lambda_see_all_checks"
+  role = var.aws_role
+  handler = "see_all_checks.lambda_handler"
+  runtime = "python3.6"
+  publish = true
+}
+
+#Create a Lambda function for upload face file
+resource "aws_lambda_function" "prod_lambda_upload_face" {
+  filename = "lambda_function_upload_face.zip"
+  function_name = "prod_lambda_upload_face"
+  role = var.aws_role
+  handler = "upload_face.lambda_handler"
   runtime = "python3.6"
   publish = true
 }
