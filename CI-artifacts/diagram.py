@@ -6,6 +6,7 @@ from diagrams.aws.storage import S3
 from diagrams.aws.network import ELB, APIGateway
 from diagrams.aws.general import Users
 from diagrams.aws.security import Cognito
+from diagrams.aws.ml import Rekognition
 from diagrams.aws.integration import SQS
 with Diagram("Infraestructure Diagram", show=False):
 
@@ -17,32 +18,25 @@ with Diagram("Infraestructure Diagram", show=False):
 
         # User validator
         iam = Cognito('User validator')
-
         # Api Gateway
         api_gw = APIGateway("Api-Gateway")
-
         # All the endpoints are lambda functions
         with Cluster("funciones"):
             workers = [Lambda("Upload video"),
-                       Lambda("View my videos"),
-                       Lambda("View all videos")]
-
-        # Load Balancers                       
-        elb = ELB('Load balancer')
-
+                       Lambda('Upload Face file'),
+                       Lambda("see your checks"),
+                       Lambda('See all checks')
+                       ]
         # All the vs with the trained model
-        with Cluster("Workers"):
-            ecs = [EC2('Trained model'),
-                   EC2('Trained model'),
-                   EC2('Trained model'),
-                   EC2('Trained model')]
-        # The S3 sotorage
+        rekognition = Rekognition('rekognition') 
+                    # The S3 sotorage
         main_storage = S3('Video storage')
-
         storaged_trigger = Lambda("Send video to get faces")
-
         # Dynamo DB
         dynamo = DDB('processed data')
+
+        faces = DDB('Person Images')
+        faces_img = S3('Person Images')
 
         getvideoMetadata = Lambda('Inform users')
 
@@ -56,8 +50,10 @@ with Diagram("Infraestructure Diagram", show=False):
     users >> api_gw >> workers
     api_gw >> iam >> api_gw
 
-    workers[0] >> main_storage >> storaged_trigger >> elb 
-    elb >> ecs >> dynamo >>  getvideoMetadata >> queue
-    
-    workers[1:] >> main_storage
-    workers[1:] >> dynamo
+    workers[0] >> main_storage >> storaged_trigger >> rekognition
+    rekognition >> dynamo >>  getvideoMetadata >> queue
+    dynamo << workers[3]
+    workers[1] >> faces
+    workers[1] >> faces_img
+    workers[2:3] >> dynamo
+    workers[2:3] >> faces
