@@ -67,17 +67,23 @@ resource "aws_sns_topic" "email_topic" {
   name = "email_topic"
 }
 
-# Subscribe the email to the topic
-resource "aws_sns_topic_subscription" email_target" {
+resource "aws_sns_topic_subscription" "email_target"{
   topic_arn = aws_sns_topic.email_topic.arn
-  protocol  = "email"
-  endpoint  = var.email
+  protocol = "email"
+  endpoint = var.email
 }
+
 
 
 #############
 ## LAMBDAS ##
 #############
+
+
+resource "awscc_rekognition_collection" "rekognition_collection" {
+  collection_id = "rekognition_collection"
+  
+}
 
 #Create a Lambda function for upload a video
 resource "aws_lambda_function" "prod_lambda" {
