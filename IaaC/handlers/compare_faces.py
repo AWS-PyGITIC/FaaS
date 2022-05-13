@@ -23,11 +23,3 @@ for record in search_faces_by_image(BUCKET, KEY, COLLECTION):
 	print ("Matched Face ({}%)".format(record['Similarity']))
 	print ("  FaceId : {}".format(face['FaceId']))
 	print ("  ImageId : {}".format(face['ExternalImageId']))
-
-
-"""
-	Expected output:
-	Matched Face (96.6647949219%)
-	  FaceId : dc090f86-48a4-5f09-905f-44e97fb1d455
-	  ImageId : test.jpg
-"""
