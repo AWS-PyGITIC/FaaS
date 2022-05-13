@@ -5,7 +5,7 @@ import os
 
 ARN = os.environ.get('topic_arn')
 
-def lambda_handler(event, context):
+def handler(event, context):
 
    client = boto3.client('sns')
    message = "Photo recognition.\n"

@@ -42,19 +42,30 @@ resource "aws_api_gateway_rest_api" "prod_api" {
 #############
 
 # Create a S3 bucket for video uploads
-resource "aws_s3_bucket" "video_bucket" {
-  bucket = "video_bucket.faas.muii"
+resource "aws_s3_bucket" "video-bucket-faas-muii" {
+  bucket = "video-bucket-faas-muii"
 }
 
 # Create a database with a timestamp and a person ID (at this moment, a person ID and a photo ID)
 resource "aws_dynamodb_table" "processed_data_table" {
-  name = "processed_data_table"
-  attributes = {
-    hash_key = "person_id"
-    range_key = "photo_id"
-    billing_mode = "PAY_PER_REQUEST"
-    stream_enabled = true
-  }
+  name           = "processed_data_table"
+  hash_key       = "PersonId"
+  range_key      = "PhotoId"
+  billing_mode   = "PAY_PER_REQUEST"
+  stream_enabled = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
+  attribute {
+      name = "PersonId"
+      type = "S"
+
+    }
+  
+  attribute {
+      name = "PhotoId"
+      type = "S"
+
+    }
+  
 }
 
 
@@ -86,31 +97,31 @@ resource "awscc_rekognition_collection" "rekognition_collection" {
 }
 
 #Create a Lambda function for upload a video
-resource "aws_lambda_function" "prod_lambda" {
-  filename = "lambda_function_upload.zip"
-  function_name = "prod_lambda"
+resource "aws_lambda_function" "upload_face_lambda" {
+  filename = "handlers/upload_face.zip"
+  function_name = "upload_face_lambda"
   role = var.aws_role
-  handler = "upload_video.lambda_handler"
+  handler = "main.handler"
   runtime = "python3.6"
   publish = true
 }
 
 #Create a Lambda function for detect a video
-resource "aws_lambda_function" "prod_lambda_detect" {
-  filename = "lambda_function_detect.zip"
-  function_name = "prod_lambda_detect"
+resource "aws_lambda_function" "compare_face" {
+  filename = "handlers/compare_face.zip"
+  function_name = "compare_face_lambda"
   role = var.aws_role
-  handler = "detect_video.lambda_handler"
+  handler = "main.handler"
   runtime = "python3.6"
   publish = true
 }
 
 #Create a Lambda function for send emails
-resource "aws_lambda_function" "prod_lambda_send_email" {
-  filename = "lambda_function_send_email.zip"
-  function_name = "prod_lambda_send_email"
+resource "aws_lambda_function" "send_email" {
+  filename = "handlers/send_email.zip"
+  function_name = "send_email_lambda"
   role = var.aws_role
-  handler = "send_email.lambda_handler"
+  handler = "main.handler"
   runtime = "python3.6"
   publish = true
 
@@ -120,37 +131,37 @@ resource "aws_lambda_function" "prod_lambda_send_email" {
     }
   }
 }
-
+/*
 #Create a Lambda function for see your checks
 resource "aws_lambda_function" "prod_lambda_see_checks" {
-  filename = "lambda_function_see_checks.zip"
+  filename = "handlers/lambda_function_see_checks.zip"
   function_name = "prod_lambda_see_checks"
   role = var.aws_role
-  handler = "see_checks.lambda_handler"
+  handler = "main.handler"
   runtime = "python3.6"
   publish = true
 }
 
 #Create a Lambda function for see all checks
 resource "aws_lambda_function" "prod_lambda_see_all_checks" {
-  filename = "lambda_function_see_all_checks.zip"
+  filename = "handlers/lambda_function_see_all_checks.zip"
   function_name = "prod_lambda_see_all_checks"
   role = var.aws_role
-  handler = "see_all_checks.lambda_handler"
+  handler = "main.handler"
   runtime = "python3.6"
   publish = true
 }
 
 #Create a Lambda function for upload face file
 resource "aws_lambda_function" "prod_lambda_upload_face" {
-  filename = "lambda_function_upload_face.zip"
+  filename = "handlers/lambda_function_upload_face.zip"
   function_name = "prod_lambda_upload_face"
   role = var.aws_role
-  handler = "upload_face.lambda_handler"
+  handler = "main.handler"
   runtime = "python3.6"
   publish = true
 }
-
+*/
 
 ##############
 ## TRIGGERS ##
@@ -158,9 +169,9 @@ resource "aws_lambda_function" "prod_lambda_upload_face" {
 
 # Create a trigger for send email lambda function
 resource "aws_lambda_event_source_mapping" "lambda_send_email_trigger" {
-  event_source_arn  = aws_dynamodb_table.processed_data_table.arn
-  function_name     = prod_lambda_send_email
+  event_source_arn  = aws_dynamodb_table.processed_data_table.stream_arn
+  function_name     = aws_lambda_function.send_email.arn
   starting_position = "LATEST"
-  batch_size        = 1
+#  batch_size        = 1
 }
 
