@@ -2,7 +2,7 @@
 import boto3
 
 BUCKET = "video_bucket.faas.muii"
-KEY = "test.jpg"
+KEY = "test.jpg" #Here must come from the trigger 
 IMAGE_ID = KEY  # S3 key as ImageId
 COLLECTION = "my-collection-id"
 

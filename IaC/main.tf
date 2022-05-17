@@ -114,6 +114,12 @@ resource "aws_lambda_function" "compare_face" {
   handler = "main.handler"
   runtime = "python3.6"
   publish = true
+
+  environment {
+    variables = {
+      COLLECTION = awscc_rekognition_collection.rekognition_collection.collection_id
+    }
+  }
 }
 
 #Create a Lambda function for send emails
