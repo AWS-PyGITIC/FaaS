@@ -53,7 +53,7 @@ resource "aws_dynamodb_table" "processed_data_table" {
   range_key      = "PhotoId"
   billing_mode   = "PAY_PER_REQUEST"
   stream_enabled = true
-  stream_view_type = "NEW_AND_OLD_IMAGES"
+  stream_view_type = "NEW_IMAGE"
   attribute {
       name = "PersonId"
       type = "S"
@@ -67,6 +67,7 @@ resource "aws_dynamodb_table" "processed_data_table" {
     }
   
 }
+
 
 
 #########
@@ -84,100 +85,35 @@ resource "aws_sns_topic_subscription" "email_target"{
   endpoint = var.email
 }
 
-
-
-#############
-## LAMBDAS ##
-#############
-
-
 resource "awscc_rekognition_collection" "rekognition_collection" {
   collection_id = "rekognition_collection"
   
 }
 
-#Create a Lambda function for upload a video
-resource "aws_lambda_function" "upload_face_lambda" {
-  filename = "handlers/upload_face.zip"
-  function_name = "upload_face_lambda"
-  role = var.aws_role
-  handler = "main.handler"
-  runtime = "python3.6"
-  publish = true
+
+# Shared values to work with Serverless
+resource "aws_ssm_parameter" "dynamo_arn" {
+  name = "dynamo-table-stream-param"
+  type = "String"
+  value = aws_dynamodb_table.processed_data_table.stream_arn
 }
 
-#Create a Lambda function for detect a video
-resource "aws_lambda_function" "compare_face" {
-  filename = "handlers/compare_face.zip"
-  function_name = "compare_face_lambda"
-  role = var.aws_role
-  handler = "main.handler"
-  runtime = "python3.6"
-  publish = true
-
-  environment {
-    variables = {
-      COLLECTION = awscc_rekognition_collection.rekognition_collection.collection_id
-    }
-  }
+resource "aws_ssm_parameter" "s3_name_param" {
+  name = "s3-arm-param"
+  type = "String"
+  value = aws_s3_bucket.video-bucket-faas-muii.na
 }
 
-#Create a Lambda function for send emails
-resource "aws_lambda_function" "send_email" {
-  filename = "handlers/send_email.zip"
-  function_name = "send_email_lambda"
-  role = var.aws_role
-  handler = "main.handler"
-  runtime = "python3.6"
-  publish = true
 
-  environment {
-    variables = {
-      topic_arn = aws_sns_topic.email_topic.arn
-    }
-  }
-}
-/*
-#Create a Lambda function for see your checks
-resource "aws_lambda_function" "prod_lambda_see_checks" {
-  filename = "handlers/lambda_function_see_checks.zip"
-  function_name = "prod_lambda_see_checks"
-  role = var.aws_role
-  handler = "main.handler"
-  runtime = "python3.6"
-  publish = true
+resource "aws_ssm_parameter" "rekognition_collection_param" {
+  name = "rekognition-collection-param"
+  type = "String"
+  value = awscc_rekognition_collection.rekognition_collection.collection_id
+
 }
 
-#Create a Lambda function for see all checks
-resource "aws_lambda_function" "prod_lambda_see_all_checks" {
-  filename = "handlers/lambda_function_see_all_checks.zip"
-  function_name = "prod_lambda_see_all_checks"
-  role = var.aws_role
-  handler = "main.handler"
-  runtime = "python3.6"
-  publish = true
+resource "aws_ssm_parameter" "topic_param" {
+     name = "topic-arn-param"
+     type = "String"
+     value = aws_sns_topic.email_topic.arn
 }
-
-#Create a Lambda function for upload face file
-resource "aws_lambda_function" "prod_lambda_upload_face" {
-  filename = "handlers/lambda_function_upload_face.zip"
-  function_name = "prod_lambda_upload_face"
-  role = var.aws_role
-  handler = "main.handler"
-  runtime = "python3.6"
-  publish = true
-}
-*/
-
-##############
-## TRIGGERS ##
-##############
-
-# Create a trigger for send email lambda function
-resource "aws_lambda_event_source_mapping" "lambda_send_email_trigger" {
-  event_source_arn  = aws_dynamodb_table.processed_data_table.stream_arn
-  function_name     = aws_lambda_function.send_email.arn
-  starting_position = "LATEST"
-#  batch_size        = 1
-}
-
