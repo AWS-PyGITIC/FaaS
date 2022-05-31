@@ -1,35 +1,39 @@
-service: Faas Update Service
+service: FaaS
 
 provider:
   name: aws
   runtime: python3.9
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
   iam:
     role: arn:aws:iam::${aws:accountId}:role/LabRole
-  
+    deploymentRole: arn:aws:iam::${aws:accountId}:role/LabRole
+  environment:
+    STAGE: ${self:provider.stage}
+
+
 functions:
+
   upload-face:
     handler: handlers/upload_face.handler
     events:
       - httpApi: 
           method: POST
           path: /
-          
 
   compare-faces:
     handler: handlers/compare_face.handler
     events:
       - s3:
+          existing: true
           bucket: ${ssm:s3-arm-param}
           event: s3:ObjectCreated:*
     environment:
-      REKOGNITION_COLLECTION : ${ssm:rekognition-collection-param}    
-      
+      REKOGNITION_COLLECTION : ${ssm:rekognition-collection-param}   
+
   send-email:
     handler: handlers/send_email.handler
     events:
       - stream:
           arn: ${ssm:dynamo-table-stream-param}
           startingPosition: LATEST
-    

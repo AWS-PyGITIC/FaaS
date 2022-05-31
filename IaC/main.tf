@@ -101,7 +101,7 @@ resource "aws_ssm_parameter" "dynamo_arn" {
 resource "aws_ssm_parameter" "s3_name_param" {
   name = "s3-arm-param"
   type = "String"
-  value = aws_s3_bucket.video-bucket-faas-muii.na
+  value = aws_s3_bucket.video-bucket-faas-muii.bucket 
 }
 
 
