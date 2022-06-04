@@ -15,17 +15,17 @@ with Diagram("Infraestructure Diagram", show=False):
     users = Users("Usuarios")
 
     # All the stuff that is on the aws Infraestructure
-    with Cluster('aws'):
+    with Cluster('AWS'):
 
         # User validator
         #iam = Cognito('User validator')
         # Api Gateway
         api_gw = APIGateway("Api-Gateway")
         # All the endpoints are lambda functions
-        with Cluster("funciones"):
+        with Cluster("Funciones"):
             workers = [Lambda("Upload video frame"),
-                       Lambda('Upload Face file'),
-                       Lambda("see your checks"),
+                       Lambda('Upload face file'),
+                       Lambda("See your checks"),
                        Lambda('See all checks')
                        ]
         # All the vs with the trained model
@@ -36,7 +36,7 @@ with Diagram("Infraestructure Diagram", show=False):
         # Dynamo DB
         dynamo = DDB('Processed data')
 
-        faces_img = S3('Person Images')
+        faces_img = S3('Person images')
 
         getvideoMetadata = Lambda('Inform users')
 
