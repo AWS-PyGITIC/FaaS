@@ -26,6 +26,12 @@ functions:
       - httpApi: 
           method: POST
           path: /temp
+  see-registrations:
+    handler: handlers/see_registrations.handler
+    events:
+      - httpApi: 
+          method: GET
+          path: /registrations
 
   send-email:
     handler: handlers/send_email.handler
