@@ -54,5 +54,5 @@ with Diagram("Infraestructure Diagram", show=False):
     workers[0] >> rekognition
     rekognition >> dynamo >>  getvideoMetadata >> queue
     dynamo << workers[3]
-    faces_img << workers[1]
+    workers[1] >> faces_img
     workers[2:3] >> dynamo
