@@ -10,6 +10,7 @@ from diagrams.aws.ml import Rekognition
 from diagrams.aws.integration import SQS
 with Diagram("Infraestructure Diagram", show=False):
 
+
     # Users model
     users = Users("Usuarios")
 
