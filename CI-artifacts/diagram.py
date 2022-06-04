@@ -17,43 +17,41 @@ with Diagram("Infraestructure Diagram", show=False):
     with Cluster('aws'):
 
         # User validator
-        iam = Cognito('User validator')
+        #iam = Cognito('User validator')
         # Api Gateway
         api_gw = APIGateway("Api-Gateway")
         # All the endpoints are lambda functions
         with Cluster("funciones"):
-            workers = [Lambda("Upload video"),
+            workers = [Lambda("Upload video frame"),
                        Lambda('Upload Face file'),
                        Lambda("see your checks"),
                        Lambda('See all checks')
                        ]
         # All the vs with the trained model
-        rekognition = Rekognition('rekognition') 
+        rekognition = Rekognition('Rekognition') 
                     # The S3 sotorage
-        main_storage = S3('Video storage')
-        storaged_trigger = Lambda("Send video to get faces")
+        main_storage = S3('Video frame storage')
+        #storaged_trigger = Lambda("Send video to get faces")
         # Dynamo DB
-        dynamo = DDB('processed data')
+        dynamo = DDB('Processed data')
 
-        faces = DDB('Person Images')
         faces_img = S3('Person Images')
 
         getvideoMetadata = Lambda('Inform users')
 
         # SQS
-        queue = SQS('email message')
+        queue = SQS('Email message')
 
 
 
     # Relations
     users << queue 
     users >> api_gw >> workers
-    api_gw >> iam >> api_gw
+    
 
-    workers[0] >> main_storage >> storaged_trigger >> rekognition
+    workers[0] >> main_storage >> rekognition
+    workers[0] >> rekognition
     rekognition >> dynamo >>  getvideoMetadata >> queue
     dynamo << workers[3]
-    workers[1] >> faces
     workers[1] >> faces_img
     workers[2:3] >> dynamo
-    workers[2:3] >> faces
