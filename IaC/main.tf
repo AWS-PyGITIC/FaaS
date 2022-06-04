@@ -8,6 +8,7 @@ terraform {
 }
 
 provider "aws" {
+  region =  "us-east-1"
   profile = "default"
   shared_config_files = [var.aws_config]
   shared_credentials_files = [var.aws_credentials]
@@ -46,11 +47,15 @@ resource "aws_s3_bucket" "video-bucket-faas-muii" {
   bucket = "video-bucket-faas-muii"
 }
 
+resource "aws_s3_bucket" "video-temp-faas-muii" {
+  bucket = "video-temp-faas-muii"
+}
+
 # Create a database with a timestamp and a person ID (at this moment, a person ID and a photo ID)
 resource "aws_dynamodb_table" "processed_data_table" {
   name           = "processed_data_table"
   hash_key       = "PersonId"
-  range_key      = "PhotoId"
+  range_key      = "Time"
   billing_mode   = "PAY_PER_REQUEST"
   stream_enabled = true
   stream_view_type = "NEW_IMAGE"
@@ -59,11 +64,9 @@ resource "aws_dynamodb_table" "processed_data_table" {
       type = "S"
 
     }
-  
   attribute {
-      name = "PhotoId"
-      type = "S"
-
+      name = "Time"
+      type = "N"
     }
   
 }
@@ -74,22 +77,11 @@ resource "aws_dynamodb_table" "processed_data_table" {
 ## SNS ##
 #########
 
-# Create a SNS topic for notifications
-resource "aws_sns_topic" "email_topic" {
-  name = "email_topic"
-}
-
-resource "aws_sns_topic_subscription" "email_target"{
-  topic_arn = aws_sns_topic.email_topic.arn
-  protocol = "email"
-  endpoint = var.email
-}
 
 resource "awscc_rekognition_collection" "rekognition_collection" {
   collection_id = "rekognition_collection"
   
 }
-
 
 # Shared values to work with Serverless
 resource "aws_ssm_parameter" "dynamo_arn" {
@@ -104,16 +96,15 @@ resource "aws_ssm_parameter" "s3_name_param" {
   value = aws_s3_bucket.video-bucket-faas-muii.bucket 
 }
 
+resource "aws_ssm_parameter" "s3_temp_name_param" {
+  name = "s3-temp-arm-param"
+  type = "String"
+  value = aws_s3_bucket.video-temp-faas-muii.bucket
+}
 
 resource "aws_ssm_parameter" "rekognition_collection_param" {
   name = "rekognition-collection-param"
   type = "String"
   value = awscc_rekognition_collection.rekognition_collection.collection_id
 
-}
-
-resource "aws_ssm_parameter" "topic_param" {
-     name = "topic-arn-param"
-     type = "String"
-     value = aws_sns_topic.email_topic.arn
 }

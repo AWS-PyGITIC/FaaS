@@ -13,23 +13,19 @@ provider:
 
 
 functions:
-
   upload-face:
     handler: handlers/upload_face.handler
     events:
       - httpApi: 
           method: POST
-          path: /
-
-  compare-faces:
+          path: /face
+  
+  upload-temp-face:
     handler: handlers/compare_face.handler
     events:
-      - s3:
-          existing: true
-          bucket: ${ssm:s3-arm-param}
-          event: s3:ObjectCreated:*
-    environment:
-      REKOGNITION_COLLECTION : ${ssm:rekognition-collection-param}   
+      - httpApi: 
+          method: POST
+          path: /temp
 
   send-email:
     handler: handlers/send_email.handler
