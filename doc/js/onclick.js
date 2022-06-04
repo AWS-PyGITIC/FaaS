@@ -16,7 +16,7 @@ function initButton(){
             //window.location.href = ruta;
            // alert('que asco de vida')
            window.localStorage.setItem('user', user)
-           window.location.assign('Home.html')    
+           window.location.assign('index.html')    
            //document.getElementById('View_all_videos').remove()     
             return false;
         }else{
