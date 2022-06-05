@@ -1,0 +1,41 @@
+service: FaaS
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::${aws:accountId}:role/LabRole
+    deploymentRole: arn:aws:iam::${aws:accountId}:role/LabRole
+  environment:
+    STAGE: ${self:provider.stage}
+
+
+functions:
+  upload-face:
+    handler: handlers/upload_face.handler
+    events:
+      - httpApi: 
+          method: POST
+          path: /face
+  
+  upload-temp-face:
+    handler: handlers/compare_face.handler
+    events:
+      - httpApi: 
+          method: POST
+          path: /temp
+  see-registrations:
+    handler: handlers/see_registrations.handler
+    events:
+      - httpApi: 
+          method: GET
+          path: /registrations
+
+  send-email:
+    handler: handlers/send_email.handler
+    events:
+      - stream:
+          arn: ${ssm:dynamo-table-stream-param}
+          startingPosition: LATEST
