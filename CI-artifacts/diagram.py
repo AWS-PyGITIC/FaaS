@@ -20,7 +20,7 @@ with Diagram("Infraestructure Diagram", show=False):
         # User validator
         #iam = Cognito('User validator')
         # Api Gateway
-        api_gw = APIGateway("Api-Gateway")
+        api_gw = APIGateway("API-Gateway")
         # All the endpoints are lambda functions
         with Cluster("Funciones"):
             workers = [Lambda("Upload video frame"),
