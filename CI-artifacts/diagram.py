@@ -44,6 +44,8 @@ with Diagram("Infraestructure Diagram", show=False):
 
         # SQS
         queue = SQS('Email message')
+        
+        sub_topic = SQS('Subscription to topic')
 
 
 
@@ -58,4 +60,5 @@ with Diagram("Infraestructure Diagram", show=False):
     dynamo << workers[3]
     workers[1] >> faces_img >> rekognition_train
     workers[1] >> rekognition_train
+    workers[1] >> sub_topic
     workers[2:3] >> dynamo
