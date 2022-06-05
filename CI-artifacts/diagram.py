@@ -29,7 +29,9 @@ with Diagram("Infraestructure Diagram", show=False):
                        Lambda('See all checks')
                        ]
         # All the vs with the trained model
-        rekognition = Rekognition('Rekognition') 
+        rekognition_train = Rekognition('Train model') 
+        
+        rekognition_predict = Rekognition('Predict') 
                     # The S3 sotorage
         main_storage = S3('Video frame storage')
         #storaged_trigger = Lambda("Send video to get faces")
@@ -50,9 +52,10 @@ with Diagram("Infraestructure Diagram", show=False):
     users >> api_gw >> workers
     
 
-    workers[0] >> main_storage >> rekognition
-    workers[0] >> rekognition
-    rekognition >> dynamo >>  getvideoMetadata >> queue
+    workers[0] >> main_storage >> rekognition_predict
+    workers[0] >> rekognition_predict
+    rekognition_predict >> dynamo >>  getvideoMetadata >> queue
     dynamo << workers[3]
-    workers[1] >> faces_img
+    workers[1] >> faces_img >> rekognition_train
+    workers[1] >> rekognition_train
     workers[2:3] >> dynamo
